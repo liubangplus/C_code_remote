@@ -18,7 +18,6 @@ struct tnode{
 };
 
 struct tnode *addtree(struct tnode *, char *);
-
 void sortlist(void);
 void treestore(struct tnode *);
 
@@ -43,7 +42,7 @@ int main()
     sortlist();
     for(i =0; i<ntn; i++)
     {
-        printf("%2d:%2s", list[i]->count, list[i]->word);
+        printf("%2d:%20s", list[i]->count, list[i]->word);
     }
     return 0;
 }
