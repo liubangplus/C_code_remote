@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define MAXWORD 100
 int getword(char *, int);
@@ -16,7 +18,6 @@ struct tnode{
 };
 
 struct tnode *addtree(struct tnode *, char *);
-
 void sortlist(void);
 void treestore(struct tnode *);
 
@@ -91,5 +92,92 @@ int getword(char *word, int lim)
     return word[0];
 }
 
-/*treestore: store in list[] pointers to tree /nodes*/
-void treestore(struct  )   u          yyy y  /
+/*treestore: store in list[] pointers to tree nodes*/
+void treestore(struct tnode *p)
+{
+    if(p!=NULL)
+    {
+        treestore(p->left);
+        if(ntn<NDISTINCT)
+        {
+            list[ntn++] = p;
+            treestore(p->right);
+        }
+    }
+}
+
+/*sortlist: sort list of pointers to tree nodes*/
+void sortlist()
+{
+    int gap, i, j;
+    struct tnode *temp;
+    for(gap = ntn/2; gap>0;gap/=2)
+    {
+        for(i=gap; i<ntn;i++)
+        {
+            for(j=i-gap; j>=0; j-=gap)
+            {
+                if((list[j]->count>=(list[j+gap]->count)))
+                {
+                    break;
+                }
+                temp = list[j];
+                list[j] = list[j+gap];
+                list[j+gap]=temp;
+            
+            }
+        }
+    }
+}
+
+
+
+
+/* talloc: make a tnode */
+struct tnode *talloc(void)
+{
+    return (struct tnode *)malloc(sizeof(struct tnode));
+
+}
+
+/*make a duplicate of s*/
+char *my_strdup(char *s) 
+{
+    char *p;
+
+    p=(char*)malloc(strlen(s)+1);
+    if(p != NULL)
+    {
+        strcpy(p, s);
+    }
+    return p;
+}
+
+
+/*addtree: add a node with w, at or below p */
+struct tnode *addtree(struct tnode *p, char *w)
+{
+    int cond;
+
+    if(p == NULL)       /* a new word has arrived */
+    {
+        p = talloc();   /* make a new node*/
+        p->word = my_strdup(w);
+        p->count =1;
+        p->left = p->right = NULL;
+    }
+    else if((cond=strcmp(w, p->word))==0)
+    {
+        p->count++;  /*repeated word*/
+    }
+    else if(cond<0) /* less than into left subtree */
+    {
+        p->left = addtree(p->left, w);
+    }
+    else        /* greater than into right subtree */
+    {
+        p->right = addtree(p->right, w);
+    }
+    return p;
+}
+
